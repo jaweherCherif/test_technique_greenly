@@ -49,4 +49,19 @@ describe("Store", () => {
       new Store([new DiscountOffer("Naturalia", 0, 5)]).updateDiscounts()
     ).toEqual([new DiscountOffer("Naturalia", -1, 7)]);
   });
+  it("should increase Vinted discount 10 days or less before expiration date by 2", () => {
+    expect(
+      new Store([new DiscountOffer("Vinted", 10, 40)]).updateDiscounts()
+    ).toEqual([new DiscountOffer("Vinted", 9, 42)]);
+  });
+  it("should increase Vinted discount  5 days or less before  expiration date by 3", () => {
+    expect(
+      new Store([new DiscountOffer("Vinted", 3, 40)]).updateDiscounts()
+    ).toEqual([new DiscountOffer("Vinted", 2, 43)]);
+  });
+  it("should drops Vinted discount to 0 after expiration date", () => {
+    expect(
+      new Store([new DiscountOffer("Vinted", -3, 40)]).updateDiscounts()
+    ).toEqual([new DiscountOffer("Vinted", -4, 0)]);
+  });
 });
