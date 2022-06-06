@@ -12,55 +12,42 @@ export class Store {
   }
   updateDiscounts() {
     for (var i = 0; i < this.discountOffers.length; i++) {
-      if (
-        this.discountOffers[i].partnerName != "Naturalia" &&
-        this.discountOffers[i].partnerName != "Vinted"
-      ) {
-        if (this.discountOffers[i].discountInPercent > 0) {
-          if (this.discountOffers[i].partnerName != "Ilek") {
-            this.discountOffers[i].discountInPercent = this.discountOffers[i].discountInPercent - 1;
-          }
-        }
-      } else {
-        if (this.discountOffers[i].discountInPercent < 50) {
-          this.discountOffers[i].discountInPercent = this.discountOffers[i].discountInPercent + 1;
-          if (this.discountOffers[i].partnerName == "Vinted") {
-            if (this.discountOffers[i].expiresIn < 11) {
-              if (this.discountOffers[i].discountInPercent < 50) {
-                this.discountOffers[i].discountInPercent = this.discountOffers[i].discountInPercent + 1;
-              }
-            }
-            if (this.discountOffers[i].expiresIn < 6) {
-              if (this.discountOffers[i].discountInPercent < 50) {
-                this.discountOffers[i].discountInPercent = this.discountOffers[i].discountInPercent + 1;
-              }
-            }
-          }
-        }
-      }
-      if (this.discountOffers[i].partnerName != "Ilek") {
-        this.discountOffers[i].expiresIn = this.discountOffers[i].expiresIn - 1;
-      }
-      if (this.discountOffers[i].expiresIn < 0) {
-        if (this.discountOffers[i].partnerName != "Naturalia") {
-          if (this.discountOffers[i].partnerName != "Vinted") {
-            if (this.discountOffers[i].discountInPercent > 0) {
-              if (this.discountOffers[i].partnerName != "Ilek") {
-                this.discountOffers[i].discountInPercent = this.discountOffers[i].discountInPercent - 1;
-              }
-            }
-          } else {
-            this.discountOffers[i].discountInPercent =
-              this.discountOffers[i].discountInPercent - this.discountOffers[i].discountInPercent;
-          }
-        } else {
-          if (this.discountOffers[i].discountInPercent < 50) {
-            this.discountOffers[i].discountInPercent = this.discountOffers[i].discountInPercent + 1;
-          }
-        }
-      }
-    }
+      if (this.discountOffers[i].partnerName === "Ilek") continue;
 
+      this.discountOffers[i].expiresIn = this.discountOffers[i].expiresIn - 1;
+
+      if (
+        this.discountOffers[i].discount > 50 ||
+        this.discountOffers[i].discount <= 0
+      )
+        continue;
+      let amount = 0;
+      switch (this.discountOffers[i].partnerName) {
+        case "Naturalia":
+          if (this.discountOffers[i].expiresIn >= 0) amount = 1;
+          else amount = 2;
+          break;
+        case "Vinted":
+          if (this.discountOffers[i].expiresIn < 0)
+            this.discountOffers[i].discountInPercent = 0;
+          else {
+            if (this.discountOffers[i].expiresIn < 6) amount = 3;
+            else if (this.discountOffers[i].expiresIn < 11) amount = 2;
+          }
+          break;
+        default:
+          if (this.discountOffers[i].expiresIn >= 0) amount = -1;
+          else amount = -2;
+          break;
+      }
+      this.discountOffers[i].discountInPercent =
+        amount > 0
+          ? Math.min(this.discountOffers[i].discountInPercent + amount, 50)
+          : Math.max(
+              this.discountOffers[i].discountInPercent - Math.abs(amount),
+              0
+            );
+    }
     return this.discountOffers;
   }
 }
