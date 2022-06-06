@@ -69,4 +69,14 @@ describe("Store", () => {
       new Store([new DiscountOffer("Ilek", 5, 40)]).updateDiscounts()
     ).toEqual([new DiscountOffer("Ilek", 5, 40)]);
   });
+  it("should decrease BackMarket discount  before expiration date by 2", () => {
+    expect(
+      new Store([new DiscountOffer("BackMarket", 4, 40)]).updateDiscounts()
+    ).toEqual([new DiscountOffer("BackMarket", 3, 38)]);
+  });
+  it("should decrease BackMarket discount  after expiration date by 4", () => {
+    expect(
+      new Store([new DiscountOffer("BackMarket", 0, 40)]).updateDiscounts()
+    ).toEqual([new DiscountOffer("BackMarket", -1, 36)]);
+  });
 });
