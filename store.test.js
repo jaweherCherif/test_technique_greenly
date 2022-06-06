@@ -39,4 +39,14 @@ describe("Store", () => {
       new Store([new DiscountOffer("Ilek", 10, 0)]).updateDiscounts()
     ).toEqual([new DiscountOffer("Ilek", 10, 0)]);
   });
+  it("should increase Naturalia discount before expiration date by 1", () => {
+    expect(
+      new Store([new DiscountOffer("Naturalia", 10, 5)]).updateDiscounts()
+    ).toEqual([new DiscountOffer("Naturalia", 9, 6)]);
+  });
+  it("should increase Naturalia discount after expiration date by 2", () => {
+    expect(
+      new Store([new DiscountOffer("Naturalia", 0, 5)]).updateDiscounts()
+    ).toEqual([new DiscountOffer("Naturalia", -1, 7)]);
+  });
 });
