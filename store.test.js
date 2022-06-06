@@ -64,4 +64,9 @@ describe("Store", () => {
       new Store([new DiscountOffer("Vinted", -3, 40)]).updateDiscounts()
     ).toEqual([new DiscountOffer("Vinted", -4, 0)]);
   });
+  it("should not change expireIn nor discount for Ilek", () => {
+    expect(
+      new Store([new DiscountOffer("Ilek", 5, 40)]).updateDiscounts()
+    ).toEqual([new DiscountOffer("Ilek", 5, 40)]);
+  });
 });
