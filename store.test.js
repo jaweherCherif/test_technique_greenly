@@ -2,8 +2,81 @@ import { Store, DiscountOffer } from "./store";
 
 describe("Store", () => {
   it("should decrease the discount and expiresIn", () => {
-    expect(new Store([new DiscountOffer("test", 2, 3)]).updateDiscounts()).toEqual(
-      [new DiscountOffer("test", 1, 2)]
-    );
+    expect(
+      new Store([new DiscountOffer("test", 2, 3)]).updateDiscounts()
+    ).toEqual([new DiscountOffer("test", 1, 2)]);
+  });
+  it("should decrease the discount after expiration date by 2", () => {
+    expect(
+      new Store([new DiscountOffer("test", 0, 3)]).updateDiscounts()
+    ).toEqual([new DiscountOffer("test", -1, 1)]);
+  });
+  it("should never exceed 50 discount", () => {
+    expect(
+      new Store([new DiscountOffer("test", 10, 50)]).updateDiscounts()
+    ).toEqual([new DiscountOffer("test", 9, 49)]);
+    expect(
+      new Store([new DiscountOffer("Naturalia", 10, 50)]).updateDiscounts()
+    ).toEqual([new DiscountOffer("Naturalia", 9, 50)]);
+    expect(
+      new Store([new DiscountOffer("Vinted", 10, 50)]).updateDiscounts()
+    ).toEqual([new DiscountOffer("Vinted", 9, 50)]);
+    expect(
+      new Store([new DiscountOffer("Ilek", 10, 50)]).updateDiscounts()
+    ).toEqual([new DiscountOffer("Ilek", 10, 50)]);
+  });
+  it("should never have negatif discount", () => {
+    expect(
+      new Store([new DiscountOffer("test", 10, 0)]).updateDiscounts()
+    ).toEqual([new DiscountOffer("test", 9, 0)]);
+    expect(
+      new Store([new DiscountOffer("Naturalia", 10, 0)]).updateDiscounts()
+    ).toEqual([new DiscountOffer("Naturalia", 9, 1)]);
+    expect(
+      new Store([new DiscountOffer("Vinted", 10, 0)]).updateDiscounts()
+    ).toEqual([new DiscountOffer("Vinted", 9, 2)]);
+    expect(
+      new Store([new DiscountOffer("Ilek", 10, 0)]).updateDiscounts()
+    ).toEqual([new DiscountOffer("Ilek", 10, 0)]);
+  });
+  it("should increase Naturalia discount before expiration date by 1", () => {
+    expect(
+      new Store([new DiscountOffer("Naturalia", 10, 5)]).updateDiscounts()
+    ).toEqual([new DiscountOffer("Naturalia", 9, 6)]);
+  });
+  it("should increase Naturalia discount after expiration date by 2", () => {
+    expect(
+      new Store([new DiscountOffer("Naturalia", 0, 5)]).updateDiscounts()
+    ).toEqual([new DiscountOffer("Naturalia", -1, 7)]);
+  });
+  it("should increase Vinted discount 10 days or less before expiration date by 2", () => {
+    expect(
+      new Store([new DiscountOffer("Vinted", 10, 40)]).updateDiscounts()
+    ).toEqual([new DiscountOffer("Vinted", 9, 42)]);
+  });
+  it("should increase Vinted discount  5 days or less before  expiration date by 3", () => {
+    expect(
+      new Store([new DiscountOffer("Vinted", 3, 40)]).updateDiscounts()
+    ).toEqual([new DiscountOffer("Vinted", 2, 43)]);
+  });
+  it("should drops Vinted discount to 0 after expiration date", () => {
+    expect(
+      new Store([new DiscountOffer("Vinted", -3, 40)]).updateDiscounts()
+    ).toEqual([new DiscountOffer("Vinted", -4, 0)]);
+  });
+  it("should not change expireIn nor discount for Ilek", () => {
+    expect(
+      new Store([new DiscountOffer("Ilek", 5, 40)]).updateDiscounts()
+    ).toEqual([new DiscountOffer("Ilek", 5, 40)]);
+  });
+  it("should decrease BackMarket discount  before expiration date by 2", () => {
+    expect(
+      new Store([new DiscountOffer("BackMarket", 4, 40)]).updateDiscounts()
+    ).toEqual([new DiscountOffer("BackMarket", 3, 38)]);
+  });
+  it("should decrease BackMarket discount  after expiration date by 4", () => {
+    expect(
+      new Store([new DiscountOffer("BackMarket", 0, 40)]).updateDiscounts()
+    ).toEqual([new DiscountOffer("BackMarket", -1, 36)]);
   });
 });
