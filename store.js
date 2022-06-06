@@ -35,6 +35,10 @@ export class Store {
             else if (this.discountOffers[i].expiresIn < 11) amount = 2;
           }
           break;
+        case "BackMarket":
+          if (this.discountOffers[i].expiresIn >= 0) amount = -2;
+          else amount = -4;
+          break;
         default:
           if (this.discountOffers[i].expiresIn >= 0) amount = -1;
           else amount = -2;
